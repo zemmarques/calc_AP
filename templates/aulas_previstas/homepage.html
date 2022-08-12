@@ -1,0 +1,437 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container">
+                <div class="row mb-2">
+                    <div class="col-sm-9">
+                        <h1 class="m-0"><i class="fas fa-pen-fancy"></i> Insira os dados </h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-3">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'aulas_previstas:homepage' %}">Home</a></li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card card-outline card-primary">
+                            <div class="card-header card-red text-center ">
+                                <a href="{% url 'aulas_previstas:homepage' %}" class="h1">
+                                    <b><i class="fas fa-calculator"></i> Calc</b> @:P
+                                </a>
+                            </div>
+                            <div class="card-body card-outline card-primary">
+                                <form method="post" id="feriadoForm"
+                                      data-feriados-url="{% url 'aulas_previstas:ajax_load_feriados' %}"
+                                      date-fim_ano-url="{% url 'aulas_previstas:ajax_load_fim_ano' %}"
+                                      date-inicio_ano-url="{% url 'aulas_previstas:ajax_load_inicio_ano' %}" novalidate>
+                                    {% csrf_token %}
+
+                                    <!-- /.Campos do formulário -->
+                                    {% for field in form %}
+
+                                        <!-- /.Ano Letivo field -->
+                                        {% if field.name == "name" %}
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Ano Letivo:</label>
+                                                        <div class="input-group mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    <span class="fas fa-school"></span>
+                                                                </div>
+                                                            </div>
+                                                            {% render_field field class="form-control" %}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- /.Erros neste field -->
+                                                    {% for error in field.errors %}
+                                                        <h6 class="text-danger" style="list-style-type:square;">
+                                                            <ul>
+                                                                <li>
+                                                                    {{ error }}
+                                                                </li>
+                                                            </ul>
+                                                        </h6>
+                                                    {% endfor %}
+                                                </div>
+
+                                        {% endif %}
+
+                                        <!-- /.Nivel de ensino field -->
+                                        {% if field.name == "grade" %}
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Nível de Ensino:</label>
+                                                        <div class="input-group mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">
+                                                                    <span class="fas fa-user-friends"></span>
+                                                                </div>
+                                                            </div>
+                                                            {% render_field field class="form-control" placeholder=field.label %}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- /.Erros neste field -->
+                                                    {% for error in field.errors %}
+                                                        <h6 class="text-danger" style="list-style-type:square;">
+                                                            <ul>
+                                                                <li>
+                                                                    {{ error }}
+                                                                </li>
+                                                            </ul>
+                                                        </h6>
+                                                    {% endfor %}
+                                                </div>
+
+                                            </div> <!-- /.div class row -->
+
+                                        {% endif %}
+
+                                        <!-- /.Disciplina anual/semestral field -->
+                                        {% if field.name == "disciplina" %}
+                                            <div class="form-group clearfix">
+                                                <div class="icheck-alizarin d-inline">
+                                                    {% render_field field class="list-unstyled d-inline" placeholder=field.label %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- /.data início do Ano Letivo field -->
+                                        {% if field.name == "inicio_ano" %}
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label id="label_inicio">Início do Ano Letivo:</label>
+                                                        <div class="input-group date mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                    <i class="fas fa-calendar-day"></i>
+                                                                </span>
+                                                            </div>
+                                                            {% render_field field class="form-control float-right" id="id_inicio_ano" %}
+                                                        </div>
+                                                        <p class="text-blue" id="p_inicio_ano"></p>
+                                                    </div>
+
+                                                    <!-- /.Erros neste field -->
+                                                    {% for error in field.errors %}
+                                                        <h6 class="text-danger" style="list-style-type:square;">
+                                                            <ul>
+                                                                <li>
+                                                                    {{ error }}
+                                                                </li>
+                                                            </ul>
+                                                        </h6>
+                                                    {% endfor %}
+                                                </div>
+
+                                        {% endif %}
+
+                                        <!-- /.data fim do Ano Letivo field disbled -->
+                                        {% if field.name == "fim_ano" %}
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Fim do Ano Letivo:</label>
+                                                        <div class="input-group date mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                    <i class="fas fa-calendar-day"></i>
+                                                                </span>
+                                                            </div>
+                                                            {% render_field field class="form-control float-right" disabled="disabled" %}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- /.Erros neste field -->
+                                                    {% for error in field.errors %}
+                                                        <h6 class="text-danger" style="list-style-type:square;">
+                                                            <ul>
+                                                                <li>
+                                                                    {{ error }}
+                                                                </li>
+                                                            </ul>
+                                                        </h6>
+                                                    {% endfor %}
+                                                </div>
+
+                                            </div> <!-- /.div class row -->
+
+                                        {% endif %}
+
+                                        <!-- /.data fim do 1ºSem field -->
+                                        {% if field.name == "fim_1s" %}
+                                            <div class="row" id="disciplina_div" {% if not field.errors %} style="display: none;" {% endif %} >
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Fim do 1ºSemestre:</label>
+                                                        <div class="input-group date mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                    <i class="fas fa-calendar-day"></i>
+                                                                </span>
+                                                            </div>
+                                                            {% render_field field class="form-control input float-right" %}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- /.Erros no formulário fields -->
+                                                    {% for error in field.errors %}
+                                                        <h6 class="text-danger" style="list-style-type:square;">
+                                                            <ul>
+                                                                <li>
+                                                                    {{ error }}
+                                                                </li>
+                                                            </ul>
+                                                        </h6>
+                                                    {% endfor %}
+                                                </div>
+
+                                        {% endif %}
+
+                                        <!-- /.data início do 2ºSem field -->
+                                        {% if field.name == "inicio_2s" %}
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Início do 2ºSemestre:</label>
+                                                        <div class="input-group date mb-3">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">
+                                                                    <i class="fas fa-calendar-day"></i>
+                                                                </span>
+                                                            </div>
+                                                            {% render_field field class="form-control input float-right" %}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- /.Erros neste field -->
+                                                    {% for error in field.errors %}
+                                                        <h6 class="text-danger" style="list-style-type:square;">
+                                                            <ul>
+                                                                <li>
+                                                                    {{ error }}
+                                                                </li>
+                                                            </ul>
+                                                        </h6>
+                                                    {% endfor %}
+                                                </div>
+
+                                            </div> <!-- /.div class row -->
+
+                                        {% endif %}
+
+                                        <!-- /.Feriado municipal field -->
+                                        {% if field.name == "feriado_movel" %}
+                                            <label>Feriado Municipal</label>
+                                            <div class="input-group mb-3">
+                                                {% render_field field class="form-control" %}
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">
+                                                        <span class="fas fa-calendar-day"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- /.Erros no formulário fields -->
+                                            {% for error in field.errors %}
+                                                <h6 class="text-danger" style="list-style-type:square;">
+                                                    <ul>
+                                                        <li>
+                                                            {{ error }}
+                                                        </li>
+                                                    </ul>
+                                                </h6>
+                                            {% endfor %}
+
+                                        {% endif %}
+
+                                        <!-- /.Carga semanal fields -->
+                                        <!-- /.2ªFEIRA field -->
+                                        {% if field.name == "segunda" %}
+                                            <label class="login-box-msg">Carga semanal da disciplina:</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" style="border: 0">2ªF</span>
+                                                </div>
+                                                {% render_field field class="form-control" placeholder=field.label %}
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="inputGroup-sizing-sm">Tempo(s)</span>
+                                                </div>
+                                            </div>
+
+                                        {% endif %}
+
+                                        <!-- /.3ªFEIRA field -->
+                                        {% if field.name == "terca" %}
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" style="border: 0">3ªF</span>
+                                                </div>
+                                                {% render_field field class="form-control" placeholder=field.label %}
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="inputGroup-sizing-sm">Tempo(s)</span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- /.4ªFEIRA field -->
+                                        {% if field.name == "quarta" %}
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" style="border: 0">4ªF</span>
+                                                </div>
+                                                {% render_field field class="form-control" placeholder=field.label %}
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="inputGroup-sizing-sm">Tempo(s)</span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- /.5ªFEIRA field -->
+                                        {% if field.name == "quinta" %}
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" style="border: 0">5ªF</span>
+                                                </div>
+                                                {% render_field field class="form-control" placeholder=field.label %}
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="inputGroup-sizing-sm">Tempo(s)</span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- /.6ªFEIRA field -->
+                                        {% if field.name == "sexta" %}
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" style="border: 0">6ªF</span>
+                                                </div>
+                                                {% render_field field class="form-control" placeholder=field.label %}
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="inputGroup-sizing-sm">Tempo(s)</span>
+                                                </div>
+                                            </div>
+
+                                            {% if form.non_field_errors %}
+                                                <h6 class="text-danger" style="list-style-type:square;">
+
+                                                    {{ form.non_field_errors }}
+
+                                                </h6>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% endfor %}
+                                    <br>
+
+                                    <!-- /.submit button -->
+                                    <div class="row">
+                                        <div class="col text-center" >
+                                            <button type="submit" id="calculaP" class="btn btn-primary btn-block">Calcular</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <!-- /.form-box -->
+                        </div><!-- /.card -->
+
+
+                    </div>
+                    <!-- /.col-md-6 -->
+                    <div class="col-lg-6">
+                        <div class="card card-orange card-outline">
+                            <div class="card-header ">
+                                 <b class="h4"> Funções</b>
+                            </div>
+                            <div class="card-body card-orange card-outline">
+                                <p class="card-text text-justify">
+                                    Calculadora Web de Aulas Previstas para o 1º, 2º, 3º ciclos e ensino secundário.
+                                </p>
+                                <p class="card-text text-justify">
+                                    <ul>
+                                        <li>
+                                            Efetua o cálculo das aulas previstas por período, semestre e ano,
+                                            de acordo com a carga horária semanal da disciplina.
+                                        </li>
+                                    </ul>
+                                </p>
+                                <p class="card-text text-justify">
+                                    <ul>
+                                        <li>
+                                            Apresenta o calendário escolar do ano letivo selecionado, bem como os feriados
+                                            nacionais e municipal considerados para o cálculo.
+                                        </li>
+                                    </ul>
+
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card card-fuchsia card-outline">
+                            <div class="card-header">
+                                <b class="h4"> Instruções de utilização </b>
+                            </div>
+                            <div class="card-body card-fuchsia card-outline">
+                                <p class="card-text text-justify">
+                                    <ul>
+                                        <li>
+                                            Preencher os campos do formulário com os dados da disciplina.
+                                        </li>
+                                    </ul>
+
+                                </p>
+                                <p class="card-text text-justify">
+                                    <ul>
+                                        <li>
+                                            O campo <b> <i>"Fim do Ano Letivo"</i> </b> é apresentado automaticamente, de acordo com o
+                                            ano letivo e o nível de ensino selecionado.
+                                        </li>
+                                    </ul>
+                                </p>
+                                <p class="card-text text-justify">
+                                    <ul>
+                                        <li>
+                                            Caso a disciplina seja <b> <i>"Semestral"</i> </b>, é necessário ainda indicar
+                                            a data de fim do 1ºSemestre e a data de início do 2ºSemestre.
+                                        </li>
+                                    </ul>
+                                </p>
+                                <p class="card-text text-justify">
+                                    <ul>
+                                        <li>
+                                            Submeter os dados do formulário carregando no botão <b> <i>"Calcular"</i> </b>.
+                                        </li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col-md-6 -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div><!-- /.content-wrapper -->
+
+{% endblock %}
+

@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1><i class="fas fa-paperclip"></i>  Resultados</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'aulas_previstas:homepage' %}">Home</a>
+                            </li>
+                            <li class="breadcrumb-item active"> Resultados:</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card card-fuchsia">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-fan"></i>
+                                    Aulas Previstas
+                                </h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive">
+
+                                <div class="row  text-center">
+                                    <div class="col-lg-4">
+                                        <p><b>Ano Letivo:</b> {{ ano_letivo }}</p>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <p><b>Disciplina:</b> {{ disciplina }}</p>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <p><b>Nível de ensino:</b> {{ escolaridade }}</p>
+                                    </div>
+                                </div>
+
+                                <p class="card-text">
+                                <ul>
+                                    <li>
+                                        <i>Tabela com o número de dias de aulas e número aulas previstas calculados a partir da carga semanal.</i>
+                                    </li>
+                                </ul>
+                                </p>
+
+
+                                {% if disciplina == "anual" %}
+                                    {% block tabela_disciplina_anual %}
+                                        {% include 'aulas_previstas/templatetags/tabela_previstas_disciplina_anual.html' %}
+                                    {% endblock %}
+                                {% endif %}
+
+                                {% if disciplina == "semestral" %}
+                                    {% block tabela_disciplina_semestral %}
+                                        {% include 'aulas_previstas/templatetags/tabela_previstas_disciplina_semestral.html' %}
+                                    {% endblock %}
+                                {% endif %}
+                                <br>
+
+                            </div>
+                            <div class="card-footer clearfix">
+                                <ul class="pagination pagination-sm m-0 float-right">
+                                    <a href="#" class="card-link">excel</a>
+                                    <a href="#" class="card-link">pdf</a>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col-md-6 -->
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <div class="card card-primary collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-fan"></i>
+                                    Calendário Escolar
+                                </h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body" >
+                                <p class="text-center"><b>Ano Letivo:</b> {{ ano_letivo }}</p>
+
+
+
+                                <table class="table text-center table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="border-top bg-gradient-gray" colspan="3" > Aulas</th>
+                                    </tr>
+                                    <tr>
+                                        <th> Períodos</th>
+                                        <th> Início</th>
+                                        <th> Fim</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for p in lista_periodos %}
+                                        {% if p.tipo == '1p' %}
+                                            <tr>
+                                                <td> 1º</td>
+                                                <td> de {{ p.start_date1|date:"j" }} a {{p.start_date2|date:"j b Y" }} </td>
+                                                <td> {{ p.end_date1|date:"j b Y" }} </td>
+
+                                            </tr>
+                                        {% elif p.tipo == '2p' %}
+                                            <tr>
+                                                <td> 2º</td>
+                                                <td> {{p.start_date1|date:"j b Y" }} </td>
+                                                <td> {{ p.end_date1|date:"j b Y" }} </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td> 3º</td>
+                                                <td> {{p.start_date1|date:"j b Y" }} </td>
+                                                <td> {{ p.end_date1|date:"j b Y" }} - {{ lista_escolaridade.2 }} <br> {{ p.end_date2|date:"j b Y" }} - {{ lista_escolaridade.1 }} <br> {{ p.end_date3|date:"j b Y" }} - {{ lista_escolaridade.0 }} </td>
+                                            </tr>
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                    </tbody>
+                                </table>
+                                <br>
+
+                                <table class="table text-center table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="border-top bg-gradient-gray" colspan="3" > Interrupções </th>
+                                    </tr>
+                                    <tr>
+                                        <th> Pausas</th>
+                                        <th> Início</th>
+                                        <th> Fim</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for p in lista_pausas_letivas %}
+                                        {% if p.tipo == 'natal' %}
+                                            <tr>
+                                                <td> Natal</td>
+                                                <td> {{ p.start_date1|date:"j b Y" }} </td>
+                                                <td> {{ p.end_date1|date:"j b Y" }} </td>
+
+                                            </tr>
+                                        {% elif p.tipo == 'carnaval' %}
+                                            <tr>
+                                                <td> Carnaval</td>
+                                                <td> {{p.start_date1|date:"j b Y" }} </td>
+                                                <td> {{ p.end_date1|date:"j b Y" }} </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td> Páscoa</td>
+                                                <td> {{ p.start_date1|date:"j b Y" }} </td>
+                                                <td> {{ p.end_date1|date:"j b Y" }} </td>
+                                            </tr>
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer clearfix">
+                                <ul class="pagination pagination-sm m-0 float-right">
+                                    <a href="#" class="card-link"> <span class="fas fa-arrow-circle-up"></span>   </a>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card card-success collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-fan"></i>
+                                    Feriados
+                                </h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text font-weight-bold">
+                                    Feriado municipal de {{ feriado_municipal.concelho }}:
+                                </p>
+
+                                <table class="table text-center table-bordered table-striped">
+
+                                    <thead>
+                                    <tr>
+                                        <th class="bg-gradient-gray"> Feriado</th>
+                                        <th class="bg-gradient-gray"> Dia</th>
+                                        <th class="bg-gradient-gray"> Dia da semana</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>{{ feriado_municipal.name}}</td>
+                                        <td>{{ feriado_municipal.data|date:"j b Y"}}</td>
+                                        <td>{{ feriado_municipal.data|date:"l"}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <br>
+                                <p class="card-text font-weight-bold">
+                                    Feriados Nacionais:
+                                </p>
+                                <table class="table text-center table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="bg-gradient-gray"> Feriado</th>
+                                        <th class="bg-gradient-gray"> Dia</th>
+                                        <th class="bg-gradient-gray"> Dia da semana</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for f in feriados_nacionais %}
+                                        <tr>
+                                            <td>{{ f.name }}</td>
+                                            <td>{{ f.data|date:"j b Y" }}</td>
+                                            <td>{{ f.data|date:"l" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="card-footer clearfix">
+                                <ul class="pagination pagination-sm m-0 float-right">
+                                    <a href="#" class="card-link"> <span class="fas fa-arrow-circle-up"></span>   </a>
+                                </ul>
+                            </div>
+                        </div><!-- /.card -->
+                    </div> <!-- /.col-lg-6 -->
+
+                </div>
+
+                <div class="row">
+
+
+                    <!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+{% endblock %}
