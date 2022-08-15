@@ -259,7 +259,7 @@ class Feriado(models.Model):
         default="nacional",
     )
     slug = models.SlugField(
-        max_length=20,
+        max_length=300,
         unique=True,
         blank=True,
         help_text="Deixar em branco para criar um slug automático e único.",
