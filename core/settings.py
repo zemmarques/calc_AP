@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'calc-AP-dev.eu-west-2.elasticbeanstalk.com',
+    '172.31.26.234',
 ]
 
 
